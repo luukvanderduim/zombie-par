@@ -1,0 +1,8 @@
+[package]
+name = "zombie-par"
+version = "0.1.5"
+authors = ["Luuk van der Duim"]
+
+[dependencies]
+term_cursor = "0.1.4"
+rayon = "1.0.0"
