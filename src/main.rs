@@ -201,7 +201,7 @@ fn main() {
 
     let administratie = Arc::new(Mutex::new(admi));
 
-    fn genereer_duos(knt: &[Option<LabStaffMember>]) -> Vec<Duo> {
+    fn generate_duos(knt: &[Option<LabStaffMember>]) -> Vec<Duo> {
         let mut tduo = Duo {
             duo_left: None,
             duo_right: None,
@@ -226,7 +226,7 @@ fn main() {
         return makep(4);
     }
 
-    let duos_vec = genereer_duos(&initstate.not_so_safe_side());
+    let duos_vec = generate_duos(&initstate.not_so_safe_side());
 
     duos_vec.into_par_iter().for_each(|v| {
         let mut state_of_sides = initstate;
@@ -244,7 +244,7 @@ fn main() {
 
             state_of_sides.terug(lantern);
 
-            for w in genereer_duos(&state_of_sides.not_so_safe_side()) {
+            for w in generate_duos(&state_of_sides.not_so_safe_side()) {
                 current_crossing.second_couple_hence = w;
 
                 state_of_sides.heen(&w.duo_left);
@@ -257,7 +257,7 @@ fn main() {
                     current_crossing.second_forth = *lantern;
                     state_of_sides.terug(lantern);
 
-                    for u in genereer_duos(&state_of_sides.not_so_safe_side()) {
+                    for u in generate_duos(&state_of_sides.not_so_safe_side()) {
                         current_crossing.last_couple_hence = u;
                         current_crossing.gen_total_passage_duration();
 
