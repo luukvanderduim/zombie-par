@@ -54,10 +54,10 @@ struct StateOfSides {
     tve: [Option<LabStaffMember>; 4],
 }
 impl StateOfSides {
-    fn heen(&mut self, l: &Option<LabStaffMember>) -> () {
+    fn send_over(&mut self, l: &Option<LabStaffMember>) -> () {
         if self.tve.contains(&l) {
             println!(
-                "{} heeft dubbelganger aan veilige brugzijde!",
+                "{} 'body-double' detected on safe side",
                 &l.unwrap().job_title
             );
         } else {
@@ -73,7 +73,7 @@ impl StateOfSides {
             }
         }
     }
-    fn terug(&mut self, l: &Option<LabStaffMember>) -> () {
+    fn send_back(&mut self, l: &Option<LabStaffMember>) -> () {
         if (&self.toe).contains(&l) {
             println!(
                 "{} heeft dubbelganger aan onveilige brugzijde!",
@@ -116,7 +116,7 @@ impl AdmBridgeCrossing {
 
             print!("{}", cursor::Clear);
             println!("================================================================");
-            println!("  Tried {:3.} out of      crossings.", &self.tel);
+            println!("  At try {:3.} out of      crossings.", &self.tel);
             println!("  This is (one of) the most efficient order(s): ");
             println!("================================================================");
             println!(
@@ -228,34 +228,37 @@ fn main() {
 
     let duos_vec = generate_duos(&initstate.not_so_safe_side());
 
+    // Here the par_iter parallelizes the outer most for-loop.
+    //
     duos_vec.into_par_iter().for_each(|v| {
         let mut state_of_sides = initstate;
         let mut current_crossing = init_passage_seq;
         current_crossing.first_couple_hence = v;
 
-        state_of_sides.heen(&v.duo_left);
-        state_of_sides.heen(&v.duo_right);
+        state_of_sides.send_over(&v.duo_left);
+        state_of_sides.send_over(&v.duo_right);
 
         for lantern in state_of_sides.safe_side().into_iter() {
             if lantern.is_none() {
                 continue;
             }
+
             current_crossing.first_forth = *lantern;
 
-            state_of_sides.terug(lantern);
+            state_of_sides.send_back(lantern);
 
             for w in generate_duos(&state_of_sides.not_so_safe_side()) {
                 current_crossing.second_couple_hence = w;
 
-                state_of_sides.heen(&w.duo_left);
-                state_of_sides.heen(&w.duo_right);
+                state_of_sides.send_over(&w.duo_left);
+                state_of_sides.send_over(&w.duo_right);
 
                 for lantern in state_of_sides.safe_side().into_iter() {
                     if lantern.is_none() {
                         continue;
                     }
                     current_crossing.second_forth = *lantern;
-                    state_of_sides.terug(lantern);
+                    state_of_sides.send_back(lantern);
 
                     for u in generate_duos(&state_of_sides.not_so_safe_side()) {
                         current_crossing.last_couple_hence = u;
@@ -267,12 +270,13 @@ fn main() {
                             .unwrap()
                             .count_and_assign_fastest(current_crossing);
                     }
-                    state_of_sides.heen(lantern);
+                    // rewind states for next iteration.
+                    state_of_sides.send_over(lantern);
                 }
-                state_of_sides.terug(&w.duo_left);
-                state_of_sides.terug(&w.duo_right);
+                state_of_sides.send_back(&w.duo_left);
+                state_of_sides.send_back(&w.duo_right);
             }
-            state_of_sides.heen(lantern);
+            state_of_sides.send_over(lantern);
         }
         // No more state dependent calls in this loop.
         // therefor there is no need to return the last two,
