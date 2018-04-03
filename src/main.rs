@@ -1,7 +1,13 @@
-// Zombies, the intern in the lab over the hanging bridge TEDed
+// Zombies-par
+//
+// Parallel bridge riddle solver in Rust
+// This program solves the TED-ed bridge riddle by Alex Gendler:
+// https://ed.ted.com/lessons/can-you-solve-the-bridge-riddle-alex-gendler
+//
 // 2018 Luuk van der Duim
 
 extern crate term_cursor as cursor;
+use std::time::{Duration, Instant};
 use std::sync::{Arc, Mutex};
 
 extern crate rayon;
@@ -107,16 +113,11 @@ struct AdmBridgeCrossing {
 impl AdmBridgeCrossing {
     fn count_and_assign_fastest(&mut self, d: BridgeCrossing) {
         self.tel += 1;
-        print!("{}{:3.}", cursor::Goto(20, 2), &self.tel);
+        print!("{}{:3.}", cursor::Goto(20, 3), &self.tel);
         if *&self.tel == 108 {
-            println!("{}", cursor::Goto(0, 12));
-        }
-        if d.total_passage_duration < self.fastest.total_passage_duration {
-            self.fastest = d;
-
             print!("{}", cursor::Clear);
             println!("================================================================");
-            println!("  At try {:3.} out of      crossings.", &self.tel);
+            println!("  Total of {:3.} possible crossings.", &self.tel);
             println!("  This is (one of) the most efficient order(s): ");
             println!("================================================================");
             println!(
@@ -125,7 +126,7 @@ impl AdmBridgeCrossing {
                 &self.fastest.first_couple_hence.duo_right.unwrap().job_title
             );
             println!(
-                " ← The first to return the lantern: {}",
+                " ← Staff member returning the lantern: {}",
                 &self.fastest.first_forth.unwrap().job_title
             );
             println!(
@@ -138,25 +139,29 @@ impl AdmBridgeCrossing {
                     .job_title
             );
             println!(
-                " ← The second to return the lantern: {}",
+                " ← Staff member returning the lantern: {}",
                 &self.fastest.second_forth.unwrap().job_title
             );
             println!(
-                " ➜ Last duo to cross are the {} amd the {}.",
+                " ➜ Final duo to cross are the {} and the {}.",
                 &self.fastest.last_couple_hence.duo_left.unwrap().job_title,
                 &self.fastest.last_couple_hence.duo_right.unwrap().job_title
             );
             println!("================================================================");
             println!(
-                "  These cross in {} minutes.",
+                "  They cross in {} minutes.",
                 &self.fastest.total_passage_duration
             );
-            println!("================================================================");
+        }
+        if d.total_passage_duration < self.fastest.total_passage_duration {
+            self.fastest = d;
         }
     }
 }
 
 fn main() {
+    let now = Instant::now();
+
     let prof = LabStaffMember {
         minutes: 10,
         job_title: "Professor".as_ref(),
@@ -280,6 +285,11 @@ fn main() {
         }
         // No more state dependent calls in this loop.
         // therefor there is no need to return the last two,
-        // to recreate the initial state of affairs.
+        // to recreate the initial state of affairs (of this loop).
     });
+    let finish = now.elapsed().subsec_nanos();
+    let finish_mc: u32 = finish / 1000;
+
+    println!("Duration of main loop: {} μs. ", finish_mc);
+    println!("================================================================");
 } // End of main
