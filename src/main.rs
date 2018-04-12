@@ -7,8 +7,8 @@
 // 2018 Luuk van der Duim
 
 extern crate term_cursor as cursor;
-use std::time::{Duration, Instant};
-use std::sync::{Arc, Mutex};
+use std::time::Instant;
+use std::sync::Mutex;
 
 extern crate rayon;
 use rayon::prelude::*;
@@ -199,12 +199,10 @@ fn main() {
 
     let eff_cross_seq_solution = init_passage_seq;
 
-    let admi = AdmBridgeCrossing {
+    let administratie = Mutex::new(AdmBridgeCrossing {
         fastest: eff_cross_seq_solution,
         tel: 0,
-    };
-
-    let administratie = Arc::new(Mutex::new(admi));
+    });
 
     fn generate_duos(knt: &[Option<LabStaffMember>]) -> Vec<Duo> {
         let mut tduo = Duo {
@@ -270,7 +268,7 @@ fn main() {
                         current_crossing.gen_total_passage_duration();
 
                         // At this point current_crossing is allowed to be consumed
-                        (*administratie)
+                        administratie
                             .lock()
                             .unwrap()
                             .count_and_assign_fastest(current_crossing);
