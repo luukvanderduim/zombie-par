@@ -234,6 +234,10 @@ fn main() {
     // Here the par_iter parallelizes the outer most for-loop.
     //
     duos_vec.into_par_iter().for_each(|v| {
+        if administratie.lock().unwrap().fastest.total_passage_duration <= 18 {
+            return;
+        }
+
         let mut state_of_sides = initstate;
         let mut current_crossing = init_passage_seq;
         current_crossing.first_couple_hence = v;
