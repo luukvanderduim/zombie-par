@@ -5,7 +5,7 @@ This program solves the TED-ed bridge riddle by Alex Gendler:
 
 https://ed.ted.com/lessons/can-you-solve-the-bridge-riddle-alex-gendler
 
-Besides solving the puzzle, this program more so serves as test bed project to familiarize myself with the Rust programming language.
+Aside from solving the puzzle, this program more so serves as test bed project to familiarize myself with the Rust programming language.
 
 The solver uses a naive depth-first backtracking to find a solution.
 It does so by:
