@@ -68,7 +68,7 @@ impl StateOfSides {
             );
         } else {
             let index = self.tve
-                .into_iter()
+                .iter()
                 .position(|elem| elem.is_none())
                 .unwrap();
             std::mem::replace(&mut self.tve[index], *l);
@@ -87,7 +87,7 @@ impl StateOfSides {
             );
         } else {
             let index = self.toe
-                .into_iter()
+                .iter()
                 .position(|elem| elem.is_none())
                 .unwrap();
             std::mem::replace(&mut self.toe[index], *l);
@@ -245,7 +245,7 @@ fn main() {
         state_of_sides.send_over(&v.duo_left);
         state_of_sides.send_over(&v.duo_right);
 
-        for lantern in state_of_sides.safe_side().into_iter() {
+        for lantern in state_of_sides.safe_side().iter() {
             if lantern.is_none() {
                 continue;
             }
@@ -260,7 +260,7 @@ fn main() {
                 state_of_sides.send_over(&w.duo_left);
                 state_of_sides.send_over(&w.duo_right);
 
-                for lantern in state_of_sides.safe_side().into_iter() {
+                for lantern in state_of_sides.safe_side().iter() {
                     if lantern.is_none() {
                         continue;
                     }
